@@ -1,0 +1,52 @@
+# In this template we are going to learn about outputs
+# Use of outputs, exports
+# !GetAtt intrinsic function
+# Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/outputs-section-structure.html
+
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Cloudformation template to create Security group and making it as output'
+Parameters: 
+  SecurityGroupPorts:
+    Description: Simple Description of a Number Parameter, with MinValue and MaxValue
+    Type: Number
+    AllowedValues: 
+      - 80
+      - 443
+      - 22    
+
+  SSHLocation:
+    Description: The IP address range that can be used to SSH to the EC2 instances
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+Resources:  
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: !Ref SecurityGroupPorts
+        ToPort: !Ref SecurityGroupPorts
+        CidrIp:
+          Ref: SSHLocation
+
+Outputs:
+  SecurityGroupId:
+    Description: security group id value
+    Value: !GetAtt 
+      - InstanceSecurityGroup
+      - GroupId
+    Export:
+      Name: WebSeverSecurityGroupId  
+  VpcId:
+    Description: VPC id to which the Security group belongs too.
+    Value: !GetAtt 
+      - InstanceSecurityGroup
+      - VpcId
+

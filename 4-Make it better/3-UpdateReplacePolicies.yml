@@ -1,0 +1,19 @@
+# In this template we are going to learn about update retain policy usage while updating cloudformation
+# UpdateReplacePolicy supports --> Delete/Retain/Snapshot
+# Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-attribute-updatereplacepolicy.html
+
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Cloudformation template to create EC2 instance with parameteres'
+
+Parameters:
+  BucketName:
+    Type: String
+
+Resources: 
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain

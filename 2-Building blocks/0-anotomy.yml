@@ -1,0 +1,23 @@
+AWSTemplateFormatVersion: "version date"
+
+Description:
+  String
+
+Metadata:
+  metadata section
+
+Parameters:
+  set of parameters
+
+Mappings:
+  set of mappings
+
+Conditions:
+  set of conditions
+
+Resources:
+  set of resources
+  # Mandatory section for the cloudformation
+
+Outputs:
+  set of outputs

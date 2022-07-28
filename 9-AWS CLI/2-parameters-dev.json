@@ -1,0 +1,23 @@
+[
+    {
+        "ParameterKey"  : "InstanceType",
+        "ParameterValue": "t2.micro"
+    },
+    {
+        "ParameterKey"  : "AMIID",
+        "ParameterValue": "ami-0022f774911c1d690"
+    },
+    {
+        "ParameterKey"  : "VolumeSize",
+        "ParameterValue": "8"
+    },   
+    {
+        "ParameterKey"  : "SecurityGroupPorts",
+        "ParameterValue": "80"
+    },
+    {
+        "ParameterKey"  : "SSHLocation",
+        "ParameterValue": "0.0.0.0/0"
+    }
+
+]

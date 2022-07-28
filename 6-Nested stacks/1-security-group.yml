@@ -1,0 +1,34 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Template to create Security group
+
+Parameters:
+  ApplicationName:
+    Description: The application name
+    Type: String
+    
+  VPCId:
+    Description: VPC to create the security group into
+    Type: AWS::EC2::VPC::Id
+  
+Resources:
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub Security group for ${ApplicationName}
+      SecurityGroupIngress:
+        - CidrIp: "10.0.0.0/25"
+          FromPort: 22
+          ToPort: 22
+          IpProtocol: tcp
+          Description: SSH for Engineering department
+        - CidrIp: "192.168.0.0/25"
+          FromPort: 22
+          ToPort: 22
+          IpProtocol: tcp
+          Description: SSH for HR department
+      VpcId: !Ref VPCId
+
+Outputs:
+  SSHGroupId:
+    Value: !Ref SSHSecurityGroup
+    Description: Id for the SSH Security Group

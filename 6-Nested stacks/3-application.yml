@@ -1,0 +1,60 @@
+# Nasted templates
+# Dependencies: Create an s3 bucket and upload security-group.yml & ec2.yml
+# & refer those endpoints while creatint this main template.
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Template to create nasted templates
+
+Parameters:
+
+  VPCId:
+    Description: VPC to create the security group and EC2 instance into
+    Type: AWS::EC2::VPC::Id
+
+  SGTemplateURL:
+    Description: URL of the nested Security group stack template
+    Type: String
+  
+  EC2TemplateURL:
+    Description: URL of the nested EC2 instance stack template
+    Type: String
+  
+  InstanceType:
+    Description: Type of the EC2 instance
+    Type: String
+    Default: t2.micro
+
+  ImageId:
+    Type: String
+    Default: ami-0022f774911c1d690
+            
+
+Resources:
+  SSHSecurityGroupStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref SGTemplateURL
+      Parameters:
+        ApplicationName: !Ref AWS::StackName
+        VPCId: !Ref VPCId
+      TimeoutInMinutes: 5
+  
+  EC2InstanceStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Ref EC2TemplateURL
+      Parameters:
+        InstanceType: !Ref InstanceType
+        ImageId: !Ref ImageId
+        SecurityGroupId: !GetAtt SSHSecurityGroupStack.Outputs.SSHGroupId
+      TimeoutInMinutes: 10
+
+Outputs:
+  SGStack:
+    Value: !Ref SSHSecurityGroupStack
+    Description: Security group stack
+  
+  EC2Stack:
+    Value: !Ref EC2InstanceStack
+    Description: EC2 instance stack
+  

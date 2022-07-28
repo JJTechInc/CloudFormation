@@ -1,0 +1,90 @@
+# In this template we are going to learn about usage of parameters
+# Types: string, number, list, AWS specific type
+# Use of the of the intrinsic function !Ref
+# Ref: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/parameters-section-structure.html
+
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Cloudformation template to create EC2 instance'
+Parameters:
+  InstanceType:
+      Description: WebServer EC2 instance type
+      Type: String
+      Default: t2.micro
+      AllowedValues:
+      - t1.micro
+      - t2.nano
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - m1.small
+      - m1.medium
+      ConstraintDescription: must be a valid EC2 instance type.
+  
+  AMIID:
+    Description: The EC2 AMI id
+    Type: String  
+    Default: ami-0022f774911c1d690
+    ConstraintDescription: Must be a valid AMI based on the region
+
+  VolumeSize:
+    Description: EBS Volume size
+    Type: Number
+    Default: 8
+    MinValue: 8
+    MaxValue: 100
+    ConstraintDescription: must be a number between 8 to 100 Gb
+
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.  
+  
+  SecurityGroupPorts:
+    Description: Simple Description of a Number Parameter, with MinValue and MaxValue
+    Type: Number
+    AllowedValues: 
+      - 80
+      - 443
+      - 22    
+
+  SSHLocation:
+    Description: The IP address range that can be used to SSH to the EC2 instances
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: must be a valid IP CIDR range of the form x.x.x.x/x.
+
+Resources:
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId:
+        Ref: AMIID
+      InstanceType:
+        Ref: InstanceType
+      SecurityGroups:
+      - Ref: InstanceSecurityGroup
+      KeyName:
+        Ref: KeyName      
+      BlockDeviceMappings:
+        -
+          DeviceName: /dev/xvda
+          Ebs:
+            VolumeType: gp2            
+            DeleteOnTermination: true
+            VolumeSize: !Ref VolumeSize
+  
+  InstanceSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH access via port 22
+      SecurityGroupIngress:
+      - IpProtocol: tcp
+        FromPort: !Ref SecurityGroupPorts
+        ToPort: !Ref SecurityGroupPorts
+        CidrIp:
+          Ref: SSHLocation

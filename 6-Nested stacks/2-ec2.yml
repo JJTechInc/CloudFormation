@@ -1,0 +1,28 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Template to create EC2 instance
+
+Parameters:
+  InstanceType:
+    Description: Type of the EC2 instance
+    Type: String
+    Default: t2.micro
+
+  ImageId:
+    Type: String
+    Default: ami-0022f774911c1d690
+    
+  
+  SecurityGroupId:
+    Description: URL of the nested stack template
+    Type: String
+
+Resources: 
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      # Note we use the pseudo parameter AWS::Region
+      ImageId: !Ref ImageId
+      SecurityGroupIds:
+        - !Ref SecurityGroupId
+
